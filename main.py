@@ -94,7 +94,7 @@ class Main:
             #self.start_plot()
             self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]])
             self.ax1.plot([self.liste[-2][0],self.liste[-2][0]],[0,self.liste[-1][3]], linestyle = 'dashed')
-            plt.draw()  
+            plt.draw()
                 
             
         
