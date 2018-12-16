@@ -16,7 +16,7 @@ class Main:
         self.x = np.arange(-100,101)
         self.y = self.x**2
                 
-        self.dp = 0
+        self.dp = 0.5*10**0
         self.start_x = 0
         self.initial_text = "x**2"
         self.liste = []
@@ -26,24 +26,28 @@ class Main:
         self.fig = plt.figure()
         
         self.ax1 = plt.subplot2grid((28,3), (0,0), rowspan = 18, colspan = 4)
-        self.ax2 = plt.subplot2grid((28,5), (22,1), rowspan = 2, colspan = 1)
+        self.ax2 = plt.subplot2grid((28,5), (22,1), rowspan = 2, colspan = 2)
         self.ax3 = plt.subplot2grid((28,5), (24,1), rowspan = 2, colspan = 1)
         self.ax4 = plt.subplot2grid((28,5), (26,1), rowspan = 2, colspan = 1)
         self.ax5 = plt.subplot2grid((28,5), (22,4), rowspan = 2, colspan = 1)
+        self.ax6 = plt.subplot2grid((28,5), (24,4), rowspan = 2, colspan = 1)
         
         self.start_plot()
         
-        self.func_box = tb(self.ax2, 'Funktionen:', initial = self.initial_text)
+        self.func_box = tb(self.ax2, 'Funktionen: f(x)=', initial = self.initial_text)
         self.func_box.on_submit(self.submit_func)
         
-        self.deci_precision = tb(self.ax3, 'Decimal præcision:', initial = str(self.dp))
+        self.deci_precision = tb(self.ax3, 'Decimal præcision:', initial = "0")
         self.deci_precision.on_submit(self.submit_precision)
         
         self.guess_box = tb(self.ax4, 'Start gæt:', initial = str(self.start_x))
         self.guess_box.on_submit(self.start_guess)
         
-        self.nxt_guess = bt(self.ax5, 'Næste gæt:')
+        self.nxt_guess = bt(self.ax5, 'Næste gæt')
         self.nxt_guess.on_clicked(self.find_next)
+        
+        self.finish = bt(self.ax6, 'Færdigør')
+        self.finish.on_clicked(self.find_all)
         
     def start_plot(self):
         self.ax1.clear()
@@ -64,7 +68,8 @@ class Main:
     
     def submit_precision(self,text):
         try:
-            self.dp = int(text)
+            self.dp = 0.5*10.0**(0.0-(float(text)))
+            print(self.dp)
         except:
             print("Fejl: Der må kun indsættes tal her")
             
@@ -95,6 +100,22 @@ class Main:
             self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]])
             self.ax1.plot([self.liste[-2][0],self.liste[-2][0]],[0,self.liste[-1][3]], linestyle = 'dashed')
             plt.draw()
+            print("x-værdi: "+ str(self.liste[-2][0]))
+            print("f("+str(self.liste[-2][0])+") = "+str(self.liste[-1][3]))
+    
+    def find_all(self,event):
+        if self.liste != []:
+            while abs(self.liste[-1][3]) > self.dp:
+                self.liste = self.ml.diff_func(self.liste[-1][0], self.initial_text, self.dp)
+                
+                #print(len(self.liste))
+                #print(self.liste[0])
+                #self.start_plot()
+                self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]])
+                self.ax1.plot([self.liste[-2][0],self.liste[-2][0]],[0,self.liste[-1][3]], linestyle = 'dashed')
+                plt.draw()
+            print("x-værdi: "+ str(self.liste[-2][0]))
+            print("f("+str(self.liste[-2][0])+") = "+str(self.liste[-1][3]))
                 
             
         
