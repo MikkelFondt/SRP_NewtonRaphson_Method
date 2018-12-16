@@ -7,17 +7,20 @@ Created on Sat Dec 15 20:34:32 2018
 import matplotlib.pyplot as plt
 from matplotlib.widgets import TextBox as tb
 from matplotlib.widgets import Button as bt
+#from matplotlib.widgets import CheckButtons as c_bt
 import numpy as np
 from method_Line import Method_Line
 
 class Main:
     
     def __init__(self):
-        self.x = np.arange(-100,101)
+        self.x = np.arange(0,201)
         self.y = self.x**2
                 
         self.dp = 0.5*10**0
         self.start_x = 0
+        self.state = 0
+        
         self.initial_text = "x**2"
         self.liste = []
         
@@ -25,12 +28,15 @@ class Main:
         
         self.fig = plt.figure()
         
-        self.ax1 = plt.subplot2grid((28,3), (0,0), rowspan = 18, colspan = 4)
-        self.ax2 = plt.subplot2grid((28,5), (22,1), rowspan = 2, colspan = 2)
-        self.ax3 = plt.subplot2grid((28,5), (24,1), rowspan = 2, colspan = 1)
-        self.ax4 = plt.subplot2grid((28,5), (26,1), rowspan = 2, colspan = 1)
-        self.ax5 = plt.subplot2grid((28,5), (22,4), rowspan = 2, colspan = 1)
-        self.ax6 = plt.subplot2grid((28,5), (24,4), rowspan = 2, colspan = 1)
+        self.ax1 = plt.subplot2grid((32,3), (0,0), rowspan = 17, colspan = 4)
+        self.ax2 = plt.subplot2grid((32,5), (22,1), rowspan = 2, colspan = 2)
+        self.ax3 = plt.subplot2grid((32,5), (24,1), rowspan = 2, colspan = 1)
+        self.ax4 = plt.subplot2grid((32,5), (26,1), rowspan = 2, colspan = 1)
+        self.ax5 = plt.subplot2grid((32,5), (22,4), rowspan = 2, colspan = 1)
+        self.ax6 = plt.subplot2grid((32,5), (24,4), rowspan = 2, colspan = 1)
+        self.ax7 = plt.subplot2grid((32,5), (28,4), rowspan = 2, colspan = 1)
+        self.ax8 = plt.subplot2grid((32,5), (30,4), rowspan = 2, colspan = 1)
+
         
         self.start_plot()
         
@@ -43,12 +49,22 @@ class Main:
         self.guess_box = tb(self.ax4, 'Start gæt:', initial = str(self.start_x))
         self.guess_box.on_submit(self.start_guess)
         
-        self.nxt_guess = bt(self.ax5, 'Næste gæt')
+        self.nxt_guess = bt(self.ax5, 'Næste x')
         self.nxt_guess.on_clicked(self.find_next)
+        self.ax5.set_title("Med numerisk differentiation", fontsize = 8)
         
         self.finish = bt(self.ax6, 'Færdigør')
         self.finish.on_clicked(self.find_all)
         
+        self.nxt_guess2 = bt(self.ax7, 'Næste x')
+        self.nxt_guess2.on_clicked(self.find_exact_next)
+        self.ax7.set_title("Med eksakt differentiation", fontsize = 8)
+        
+        self.finish2 = bt(self.ax8, 'Færdigør')
+        self.finish2.on_clicked(self.exact_find_all)
+        
+
+    
     def start_plot(self):
         self.ax1.clear()
         self.ax1.plot(self.x,self.y)
@@ -77,47 +93,86 @@ class Main:
         if text != '':
             self.start_x = float(text)
             self.ml.clear_list()
-            self.liste = self.ml.diff_func(float(text),self.initial_text,self.dp)
-            
-            self.start_plot()
-            self.ax1.plot([self.liste[0][0],self.liste[0][2]],[0,self.liste[0][1]])
-            self.ax1.plot([self.start_x,self.start_x],[0,self.liste[0][3]],linestyle = 'dashed')
-            plt.draw()     
-            
-            """self.liste = ml.get_l(self)
-            if ml.l[0][2] < ml.l[0][0]:
-                diff = abs(self.liste[0][0]-self.liste[0][2])
-                fv = eval(self.liste[0][1].replace("x","{}".format(diff+self.liste[0][0])))
-                self.ax1.plot([self.liste[0][2],self.liste[0][0]+diff],[0,fv])"""
+            self.liste = []
     
     def find_next(self,event):
         if self.liste != []:
             self.liste = self.ml.diff_func(self.liste[-1][0], self.initial_text, self.dp)
+            self.ax1.plot([self.liste[-2][0],self.liste[-2][0]],[0,self.liste[-1][3]], linestyle = 'dashed')
+            print("x-værdi: "+ str(self.liste[-2][0]))
+            print("f("+str(self.liste[-2][0])+") = "+str(self.liste[-1][3]))
+        elif self.start_x != '':
+            self.start_plot()
+            self.liste = self.ml.diff_func(self.start_x,self.initial_text,self.dp)
+            self.ax1.plot([self.start_x,self.start_x],[0,self.liste[-1][3]], linestyle = 'dashed')
+            print("x-værdi: "+ str(self.start_x))
+            print("f("+str(self.start_x)+") = "+str(self.liste[-1][3]))
             
-            #print(len(self.liste))
-            #print(self.liste[0])
-            #self.start_plot()
+        #print(len(self.liste))
+        #print(self.liste[0])
+        #self.start_plot()
+        self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]])
+        plt.draw()
+        
+    
+    def find_all(self,event):
+        gentagelser = 0
+        if self.liste == []:
+            gentagelser += 1
+            self.start_plot()
+            self.liste = self.ml.diff_func(self.start_x,self.initial_text,self.dp)
+            
+            self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]])
+            self.ax1.plot([self.start_x,self.start_x],[0,self.liste[-1][3]], linestyle = 'dashed')
+            
+        while abs(self.liste[-1][3]) > self.dp:
+            gentagelser += 1
+            self.liste = self.ml.diff_func(self.liste[-1][0], self.initial_text, self.dp)
+
             self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]])
             self.ax1.plot([self.liste[-2][0],self.liste[-2][0]],[0,self.liste[-1][3]], linestyle = 'dashed')
             plt.draw()
-            print("x-værdi: "+ str(self.liste[-2][0]))
-            print("f("+str(self.liste[-2][0])+") = "+str(self.liste[-1][3]))
+        print("antal gentagelser: " + str(gentagelser))
+        print("x-værdi: "+ str(self.liste[-2][0]))
+        print("f("+str(self.liste[-2][0])+") = "+str(self.liste[-1][3]))
     
-    def find_all(self,event):
+    def find_exact_next(self,event):
         if self.liste != []:
-            while abs(self.liste[-1][3]) > self.dp:
-                self.liste = self.ml.diff_func(self.liste[-1][0], self.initial_text, self.dp)
-                
-                #print(len(self.liste))
-                #print(self.liste[0])
-                #self.start_plot()
-                self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]])
-                self.ax1.plot([self.liste[-2][0],self.liste[-2][0]],[0,self.liste[-1][3]], linestyle = 'dashed')
-                plt.draw()
+            self.liste = self.ml.exact_diff(self.liste[-1][0],self.initial_text)
+            self.ax1.plot([self.liste[-2][0],self.liste[-2][0]],[0,self.liste[-1][3]], linestyle = 'dashed')
             print("x-værdi: "+ str(self.liste[-2][0]))
             print("f("+str(self.liste[-2][0])+") = "+str(self.liste[-1][3]))
-                
+        elif self.start_x != '':
+            self.start_plot()
+            self.liste = self.ml.exact_diff(self.start_x,self.initial_text)
+            self.ax1.plot([self.start_x,self.start_x],[0,self.liste[-1][3]], linestyle = 'dashed')
+            print("x-værdi: "+ str(self.start_x))
+            print("f("+str(self.start_x)+") = "+str(self.liste[-1][3]))
+        self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]])
+        plt.draw()
+        
+    
+    def exact_find_all(self,event):
+        gentagelser = 0
+        if self.liste == []:
+            gentagelser += 1
+            self.start_plot()
+            self.liste = self.ml.exact_diff(self.start_x,self.initial_text)
             
+            self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]])
+            self.ax1.plot([self.start_x,self.start_x],[0,self.liste[-1][3]], linestyle = 'dashed')
+            
+        while abs(self.liste[-1][3]) > self.dp:
+            gentagelser += 1
+            self.liste = self.ml.exact_diff(self.liste[-1][0], self.initial_text)
+
+            self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]])
+            self.ax1.plot([self.liste[-2][0],self.liste[-2][0]],[0,self.liste[-1][3]], linestyle = 'dashed')
+            plt.draw()
+        print("antal gentagelser: " + str(gentagelser))
+        print("x-værdi: "+ str(self.liste[-2][0]))
+        print("f("+str(self.liste[-2][0])+") = "+str(self.liste[-1][3]))
+        
         
 main = Main()
 plt.show()
