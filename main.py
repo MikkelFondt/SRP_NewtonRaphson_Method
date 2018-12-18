@@ -19,16 +19,16 @@ class Main:
                 
         self.dp = 0.5*10**0
         self.start_x = 0
-        self.state = 0
+        #self.state = 0
         
         self.initial_text = "x**2"
         self.liste = []
         
         self.ml = Method_Line()
         
-        self.fig = plt.figure()
+        #self.fig = plt.figure()
         
-        self.ax1 = plt.subplot2grid((32,3), (0,0), rowspan = 17, colspan = 4)
+        self.ax1 = plt.subplot2grid((32,5), (0,0), rowspan = 17, colspan = 5)
         self.ax2 = plt.subplot2grid((32,5), (22,1), rowspan = 2, colspan = 3)
         self.ax3 = plt.subplot2grid((32,5), (24,1), rowspan = 2, colspan = 1)
         self.ax4 = plt.subplot2grid((32,5), (26,1), rowspan = 2, colspan = 1)
@@ -74,7 +74,6 @@ class Main:
         self.ax1.set_xlabel('x-akse')
         self.ax1.set_ylabel('y-akse')
         self.ax1.set_title('Newton-Raphson Metoden')
-        #self.ml.clear_list()
         plt.draw()
     
     def submit_func(self,text):
