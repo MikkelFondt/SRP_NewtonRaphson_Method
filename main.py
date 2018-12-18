@@ -14,7 +14,7 @@ from method_Line import Method_Line
 class Main:
     
     def __init__(self):
-        self.x = np.arange(0,201)
+        self.x = np.arange(0,21)
         self.y = self.x**2
                 
         self.dp = 0.5*10**0
@@ -29,7 +29,7 @@ class Main:
         self.fig = plt.figure()
         
         self.ax1 = plt.subplot2grid((32,3), (0,0), rowspan = 17, colspan = 4)
-        self.ax2 = plt.subplot2grid((32,5), (22,1), rowspan = 2, colspan = 2)
+        self.ax2 = plt.subplot2grid((32,5), (22,1), rowspan = 2, colspan = 3)
         self.ax3 = plt.subplot2grid((32,5), (24,1), rowspan = 2, colspan = 1)
         self.ax4 = plt.subplot2grid((32,5), (26,1), rowspan = 2, colspan = 1)
         self.ax5 = plt.subplot2grid((32,5), (22,4), rowspan = 2, colspan = 1)
@@ -53,21 +53,21 @@ class Main:
         self.nxt_guess.on_clicked(self.find_next)
         self.ax5.set_title("Med numerisk differentiation", fontsize = 8)
         
-        self.finish = bt(self.ax6, 'Færdigør')
+        self.finish = bt(self.ax6, 'Færdiggør')
         self.finish.on_clicked(self.find_all)
         
         self.nxt_guess2 = bt(self.ax7, 'Næste x')
         self.nxt_guess2.on_clicked(self.find_exact_next)
         self.ax7.set_title("Med eksakt differentiation", fontsize = 8)
         
-        self.finish2 = bt(self.ax8, 'Færdigør')
+        self.finish2 = bt(self.ax8, 'Færdiggør')
         self.finish2.on_clicked(self.exact_find_all)
         
 
     
     def start_plot(self):
         self.ax1.clear()
-        self.ax1.plot(self.x,self.y)
+        self.ax1.plot(self.x,self.y, linewidth = 2)
         self.ax1.axhline(y=0, color = (0,0,0), linewidth = 1)
         self.ax1.axvline(x=0, color = (0,0,0), linewidth = 1)
         self.ax1.grid(b=True, which='major', axis='both')
@@ -111,7 +111,7 @@ class Main:
         #print(len(self.liste))
         #print(self.liste[0])
         #self.start_plot()
-        self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]])
+        self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]],linewidth = 2, color = (0.5,0,0))
         plt.draw()
         
     
@@ -122,14 +122,14 @@ class Main:
             self.start_plot()
             self.liste = self.ml.diff_func(self.start_x,self.initial_text,self.dp)
             
-            self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]])
+            self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]],linewidth = 2, color = (0.5,0,0))
             self.ax1.plot([self.start_x,self.start_x],[0,self.liste[-1][3]], linestyle = 'dashed')
             
         while abs(self.liste[-1][3]) > self.dp:
             gentagelser += 1
             self.liste = self.ml.diff_func(self.liste[-1][0], self.initial_text, self.dp)
 
-            self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]])
+            self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]],linewidth = 2, color = (0.5,0,0))
             self.ax1.plot([self.liste[-2][0],self.liste[-2][0]],[0,self.liste[-1][3]], linestyle = 'dashed')
             plt.draw()
         print("antal gentagelser: " + str(gentagelser))
@@ -148,7 +148,7 @@ class Main:
             self.ax1.plot([self.start_x,self.start_x],[0,self.liste[-1][3]], linestyle = 'dashed')
             print("x-værdi: "+ str(self.start_x))
             print("f("+str(self.start_x)+") = "+str(self.liste[-1][3]))
-        self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]])
+        self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]],linewidth = 2, color = (0.5,0,0))
         plt.draw()
         
     
@@ -159,14 +159,14 @@ class Main:
             self.start_plot()
             self.liste = self.ml.exact_diff(self.start_x,self.initial_text)
             
-            self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]])
+            self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]],linewidth = 2, color = (0.5,0,0))
             self.ax1.plot([self.start_x,self.start_x],[0,self.liste[-1][3]], linestyle = 'dashed')
             
         while abs(self.liste[-1][3]) > self.dp:
             gentagelser += 1
             self.liste = self.ml.exact_diff(self.liste[-1][0], self.initial_text)
 
-            self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]])
+            self.ax1.plot([self.liste[-1][0],self.liste[-1][2]],[0,self.liste[-1][1]],linewidth = 2, color = (0.5,0,0))
             self.ax1.plot([self.liste[-2][0],self.liste[-2][0]],[0,self.liste[-1][3]], linestyle = 'dashed')
             plt.draw()
         print("antal gentagelser: " + str(gentagelser))
