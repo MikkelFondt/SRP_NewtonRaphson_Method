@@ -16,8 +16,7 @@ class Method_Line:
         self.l = []
     
     def diff_func(self,xn,f,dp):
-        f = sp.Lambda(x,f)
-        
+        f = sp.Lambda(x,f)      
         f1 = sp.Lambda(x,sp.differentiate_finite(f(x),x,points = [x-dp,x+dp]))
         
         nxt_x = xn-(f(xn)/f1(xn))
