@@ -5,7 +5,7 @@ Created on Sat Dec 15 16:29:06 2018
 @author: Mikkel Meisner Fondt
 """
 import sympy as sp
-from scipy.misc import derivative
+#from scipy.misc import derivative
 
 global x
 class Method_Line:
@@ -18,12 +18,10 @@ class Method_Line:
     def diff_func(self,xn,f,dp):
         f = sp.Lambda(x,f)
         
-        f1 = derivative(f,xn,dx = dp)
-
-        b = f(xn)-f1*xn
+        f1 = sp.Lambda(x,sp.differentiate_finite(f(x),x,points = [x-dp,x+dp]))
         
-        nxt_x = xn-(f(xn)/f1)
-        
+        nxt_x = xn-(f(xn)/f1(xn))
+                
         if nxt_x < xn:
             diff = (xn+abs(nxt_x-xn))
             if diff > 20:
@@ -33,7 +31,9 @@ class Method_Line:
             if diff < 0:
                 diff = 0
         
-        tangent = f1*diff+b
+        b = f(xn)-f1(xn)*xn
+        
+        tangent = f1(xn)*diff+b
         func = f(xn)
         
         self.l.append([nxt_x,tangent,diff,func])
