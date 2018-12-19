@@ -15,49 +15,49 @@ class Method_Line:
         x = sp.Symbol("x")
         self.l = []
     
-    def diff_func(self,x1,y,dp):
-        f = sp.Lambda(x,y)
+    def diff_func(self,xn,f,dp):
+        f = sp.Lambda(x,f)
         
-        f1 = derivative(f,x1,dx = dp)
+        f1 = derivative(f,xn,dx = dp)
 
-        b = f(x1)-f1*x1
+        b = f(xn)-f1*xn
         
-        nxt_x = x1-(f(x1)/f1)
+        nxt_x = xn-(f(xn)/f1)
         
-        if nxt_x < x1:
-            diff = (x1+abs(nxt_x-x1))
+        if nxt_x < xn:
+            diff = (xn+abs(nxt_x-xn))
             if diff > 20:
                 diff = 20
         else:
-            diff = (x1-abs(nxt_x-x1))
+            diff = (xn-abs(nxt_x-xn))
             if diff < 0:
                 diff = 0
         
         tangent = f1*diff+b
-        func = f(x1)
+        func = f(xn)
         
         self.l.append([nxt_x,tangent,diff,func])
         #print(self.l[0])
         return self.l
     
-    def exact_diff(self,x1,y):
-        f = sp.Lambda(x,y)
+    def exact_diff(self,xn,f):
+        f = sp.Lambda(x,f)
         f1 = sp.Lambda(x,sp.diff(f(x),x))
         
-        nxt_x = x1-(f(x1)/f1(x1))
+        nxt_x = xn-(f(xn)/f1(xn))
         
-        if nxt_x < x1:
-            diff = (x1+abs(nxt_x-x1))
+        if nxt_x < xn:
+            diff = (xn+abs(nxt_x-xn))
             if diff > 20:
                 diff = 20
         else:
-            diff = (x1-abs(nxt_x-x1))
+            diff = (xn-abs(nxt_x-xn))
             if diff < 0:
                 diff = 0
         
-        tangent = f1(x1)*diff+f(x1)-(f1(x1)*x1)
+        tangent = f1(xn)*diff+f(xn)-(f1(xn)*xn)
         
-        self.l.append([nxt_x,tangent,diff,f(x1)])
+        self.l.append([nxt_x,tangent,diff,f(xn)])
         return self.l
 
     def clear_list(self):
